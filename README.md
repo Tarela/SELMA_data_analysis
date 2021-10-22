@@ -65,24 +65,33 @@ python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py
 ```
 #### 3. published method
 \# note that for the published method we didn't add the SELMA bias improvement (i.e., the script Seqbias_compare_8mer_encoding_pred_obs.py was no longer used). 
-For "Martins2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "sob" (short for seqOutBias). Then the observed and bias expected cleavages were estimated by the example command line:
+\# for the DNase-seq analsyis (Supplementary Figure 3 c-d) we used the same scripts and parameters for ATACseq data and just switch the data to DNase-seq data. 
+a. For "Martins2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "sob" (short for seqOutBias). Then the observed and bias expected cleavages were estimated by the example command line:
 ```sh
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t sob  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_sob10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 ```
 where the ATACseq_sob10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype sob".<br>
 
-For "Baek2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "bagfoot" (short for bagfootr). Then the observed and bias expected cleavages were estimated by the example command line:
+b. For "Baek2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "bagfoot" (short for bagfootr). Then the observed and bias expected cleavages were estimated by the example command line:
 ```sh
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t bag55  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_bagfoot10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 ```
 where the ATACseq_bagfoot10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype bagfoot".<br>
 
-For "Calviello2019" method the observed and bias expected cleavages were estimated by the example command line:
+c. For "Calviello2019" method the observed and bias expected cleavages were estimated by the example command line:
 ```sh
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t repFoot  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_repfoot10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 ```
 where the ATACseq_bagfoot10merBias.txt was the bias score downloaded from the original study.<br>
 
+### To compare the bp-resolution cleavage pattern on motif centers (Supplementary Figure 3 a-b)
+we first extract the observed cleavages from the ATAC-seq data (using strand-splitted bigWig files calculated as described above: plus.bw, minus.bw) using the script: get_cleavage_pattern_motif_fixlen.py, example command line: 
+```sh
+python /nv/vol190/zanglab/sh8tv/Script/ATAC/get_cleavage_pattern_motif_fixlen.py -i CTCF_motif.bed -o CTCF_motif_ATAC_cleavage.bed -f /PATH/cleavage_bw/ -n useATACseqBW --ext 100
+```
+\# CTCF_motif is the genome-wide CTCF motif sites (see the method section of SELMA paper for motif sites scanning).
+\# /PATH/cleavage_bw/ is the path for the cleavage bigwig files (calculated as described above), there should be two bigWig files, one for plus strand bigWig and the other for minus strand. And the bigWig files should have the name as useATACseqBW_plus.bw and useATACseqBW_minus.bw. The prefix of the file name is specificed by the "-n" parameter. 
+\# In the output file (i.e., CTCF_motif_ATAC_cleavage.bed) there are 400 extra columns added to the end of the original 6 motif columns, represent the bp-resolution cleavages (1-200 for plus and 201-400 for minus). Then the file is read into R and the center +/- 50bp of the signal for differet motifs were aligned and take average for the aggregate plot. The plus and minus strand signal are separated for the red and blue lines (labeled as 5' and 3' respectively in the Supplementary Figure). To plot the 9bp shifted version, the plus strand signal is kept the same and the minus strand signal is selected 9bp left to the plus strand signal. 
 
 ## Section 2: bulk footprint analysis (Figure 4, Supplementary Figure 5-6)
 
@@ -97,3 +106,7 @@ where the ATACseq_bagfoot10merBias.txt was the bias score downloaded from the or
 ATACseqbias_fromBED_upperletter.py: twobitreader <br>
 Seqbias_compare_8mer_encoding_pred_obs.py: numpy <br>
 scan_cuts_bias_region.py: bx, twobitreader, numpy <br>
+get_cleavage_pattern_motif_fixlen.py: bx <br>
+
+
+
