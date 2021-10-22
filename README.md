@@ -64,13 +64,24 @@ In the The "SELMA" method of bias for each 10-mer was estimated with the same wa
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t fxr  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_SELMA10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 ```
 #### 3. published method
-For "Martins2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to sob (short for seqOutBias). Then the observed and bias expected cleavages were estimated by the example command line:
+\# note that for the published method we didn't add the SELMA bias improvement (i.e., the script Seqbias_compare_8mer_encoding_pred_obs.py was no longer used). 
+For "Martins2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "sob" (short for seqOutBias). Then the observed and bias expected cleavages were estimated by the example command line:
 ```sh
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t sob  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_sob10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 ```
-where the ATACseq_sob10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype sob".
+where the ATACseq_sob10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype sob".<br>
 
+For "Baek2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to "bagfoot" (short for bagfootr). Then the observed and bias expected cleavages were estimated by the example command line:
+```sh
+python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t bag55  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_bagfoot10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
+```
+where the ATACseq_bagfoot10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype bagfoot".<br>
 
+For "Calviello2019" method the observed and bias expected cleavages were estimated by the example command line:
+```sh
+python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t repFoot  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_repfoot10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
+```
+where the ATACseq_bagfoot10merBias.txt was the bias score downloaded from the original study.<br>
 
 
 ## Section 2: bulk footprint analysis (Figure 4, Supplementary Figure 5-6)
