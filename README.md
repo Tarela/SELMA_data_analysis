@@ -93,11 +93,6 @@ python /nv/vol190/zanglab/sh8tv/Script/ATAC/get_cleavage_pattern_motif_fixlen.py
 \# /PATH/cleavage_bw/ is the path for the cleavage bigwig files (calculated as described above), there should be two bigWig files, one for plus strand bigWig and the other for minus strand. And the bigWig files should have the name as useATACseqBW_plus.bw and useATACseqBW_minus.bw. The prefix of the file name is specificed by the "-n" parameter. 
 \# In the output file (i.e., CTCF_motif_ATAC_cleavage.bed) there are 400 extra columns added to the end of the original 6 motif columns, represent the bp-resolution cleavages (1-200 for plus and 201-400 for minus). Then the file is read into R and the center +/- 50bp of the signal for differet motifs were aligned and take average for the aggregate plot. The plus and minus strand signal are separated for the red and blue lines (labeled as 5' and 3' respectively in the Supplementary Figure). To plot the 9bp shifted version, the plus strand signal is kept the same and the minus strand signal is selected 9bp left to the plus strand signal. 
 
-## Section 2: bulk footprint analysis (Figure 4, Supplementary Figure 5-6)
-
-## Section 3: single cell ATAC-seq analysis (Figure 5, Supplementary Figure 7)
-
-
 
 
 ## Requirements
