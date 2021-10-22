@@ -1,11 +1,11 @@
 # SELMA_data_analysis
 
 ## Section 1: Bias estimation (Figure 1-3, Supplementary Figure 1-4):
-### To generate the scatter plots in Figure 1 d-k, Supplementary Figure 1 a-c:
+### To generate the scatter plots for k-mers' bias score (Figure 1 d-k, Supplementary Figure 1 a-c, Supplementary Figure 3 k-n):
 #### 1. estimate naive k-mer bias 
-script: ATACseqbias_fromBED.py, example command line: 
+script: ATACseqbias_fromBED_upperletter.py, example command line: 
 ```sh
-python ATACseqbias_fromBED.py -p hg38.chrom.sizes -t ATACseq_reads.bed -f 5 -s hg38.2bit -o ATACseq_naive10merBias.txt
+python ATACseqbias_fromBED_upperletter.py -p hg38.chrom.sizes -t ATACseq_reads.bed -f 5 -s hg38.2bit -o ATACseq_naive10merBias.txt
 ```
 \# hg38.chrom.sizes and hg38.2bit are the chromosome sizes and genome sequence of human hg38 genome (or mouse mm10 genome) downloaded from UCSC genome browser or NCBI.<br>
 \# ATACseq_reads.bed is the aligned reads in bed format (input file, support both SE or PE data). <br>
@@ -48,11 +48,29 @@ script: scan_cuts_bias_region.py, example command line:
 python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t flank  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_SELMA10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
 Rscript pred_obs_cmp.r ATACseq_obsExpCuts.txt ATACseq_obsExpCutsCor.txt
 ```
-\# ATACseq_summit200.bed, ATACseq_SELMA10merBias.txt, ATACseq_obsCuts_plus.bw, and ATACseq_obsCuts_minus.bw are the intermediate results generated from the above steps
-\# the parameter "Cspan" represent the length of flanking background region considered for each bp
-\# the parameter "flank" represent the 5' only mode of bias consideration. In the following section it will be replaced by "-t fxr" for SELMA suggested methods. 
-\# ATACseq_obsExpCuts.txt is the output files for observed and expected cleavages on peaks. 
-\# the Rscript pred_obs_cmd.r will return a tiny file (ATACseq_obsExpCutsCor.txt) for the correlation coefficient between observed and expected cleavages, the correlation coefficient was used as the height of the bar in the barplots (Figure 1 l-o, Supplementary Figure 2)
+\# ATACseq_summit200.bed, ATACseq_SELMA10merBias.txt, ATACseq_obsCuts_plus.bw, and ATACseq_obsCuts_minus.bw are the intermediate results generated from the above steps.<br>
+\# the parameter "Cspan" represent the length of flanking background region considered for each bp. <br>
+\# the parameter "flank" represent the 5' only mode of bias consideration. For example to use 10-mer model, the --flank parameter was set to 5 (k/2 of the k-mer) <br>
+\# ATACseq_obsExpCuts.txt is the output files for observed and expected cleavages on peaks. <br>
+\# the Rscript pred_obs_cmd.r will return a tiny file (ATACseq_obsExpCutsCor.txt) for the correlation coefficient between observed and expected cleavages, the correlation coefficient was used as the height of the bar in the barplots (Figure 1 l-o) or the color in the heatmap (Supplementary Figure 2).<br>
+
+### To calculate the correlation coefficient with different bias estimation method (Figure 2d-i, Supplementary Figure 3 c-j)
+The correlation coefficient for all these plots were calculated in exactly the same way as for figure 1. The only difference is that the bias expected cleavages in Figure 2 were calculated with different methods (indicated by the x-axis of the barplots)
+#### 1. 5' only method
+The "5' only" method of bias estimation was estimated with the method described in the above section but the k-mer length was fixed at 10-mer ("--flank 5").
+#### 2. SELMA method
+In the The "SELMA" method of bias for each 10-mer was estimated with the same way as "5'only" method. The bias expected cleavages were estimated similarly using the script: scan_cuts_bias_region.py with parameter "-t fxr" (short for forwardXreverse), example command line: 
+```sh
+python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t fxr  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_SELMA10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
+```
+#### 3. published method
+For "Martins2017" method the bias for each k-mer was estimated using the script ATACseqbias_fromBED_upperletter.py with the similar parameters as for the Figure 1 but set the "--biastype" parameter to sob (short for seqOutBias). Then the observed and bias expected cleavages were estimated by the example command line:
+```sh
+python /sfs/qumulo/qproject/CPHG/ZANG/sh8tv/Script/ATAC/scan_cuts_bias_region.py  --Cspan 25  -t sob  -i ATACseq_summit200.bed -o ATACseq_obsExpCuts.txt -b ATACseq_sob10merBias.txt -p ATACseq_obsCuts_plus.bw -n ATACseq_obsCuts_minus.bw
+```
+where the ATACseq_sob10merBias.txt was the bias score estimated by ATACseqbias_fromBED_upperletter.py with the parameter "--biastype sob".
+
+
 
 
 ## Section 2: bulk footprint analysis (Figure 4, Supplementary Figure 5-6)
@@ -65,6 +83,6 @@ Rscript pred_obs_cmp.r ATACseq_obsExpCuts.txt ATACseq_obsExpCutsCor.txt
 ## Requirements
 ### python version 2.7, R >= 3.0
 ### Required modules for scripts: 
-ATACseqbias_fromBED.py: twobitreader <br>
+ATACseqbias_fromBED_upperletter.py: twobitreader <br>
 Seqbias_compare_8mer_encoding_pred_obs.py: numpy <br>
 scan_cuts_bias_region.py: bx, twobitreader, numpy <br>
